@@ -1,5 +1,4 @@
 function genFenScript() {
-  debugger;
   // var squareClasses = ["piece wr square-11", "piece wn square-21", "piece wb square-31", "piece wq square-41", "piece wk square-51", "piece wb square-61", "piece wn square-63", "piece wr square-81", "piece wp square-12", "piece wp square-22", "piece wp square-32", "piece wp square-52", "piece wp square-62", "piece wp square-72", "piece wp square-82", "piece bq square-66", "piece bp square-17", "piece bp square-27", "piece bp square-37", "piece bp square-47", "piece bp square-77", "piece bp square-87", "piece br square-18", "piece bn square-28", "piece bb square-38", "piece bk square-58", "piece bb square-68", "piece bn square-78", "piece br square-88"];
   var chessBoard = null;
 
@@ -20,12 +19,12 @@ function genFenScript() {
       chessBoard[i] = new Array(8);
     }
 
-    squareClassList.forEach((squareClass) => {
+    squareClassList.forEach((squareClass, index) => {
       // var className = 'piece bq square-53';
+      // console.log(index);
       let className = squareClass;
-      let regexp = /square-\d\d/;
 
-      let match = className.match(regexp);
+      let match = className.match(/square-\d\d/);
       if (match[0] && match[0] != "") {
         let sqMatch = match[0].match(/\d\d/);
         if (sqMatch[0] && sqMatch[0] != "") {
@@ -33,12 +32,10 @@ function genFenScript() {
         }
       }
 
-      var p = className.match(/\s..\s/);
+      var p = className.match(/(\s..\s)|(\s..$)|(^..\s)/);
       if (p[0] && p[0] != "") {
         var piece = p[0].trim();
       }
-
-      // console.log(sqNum);
 
       chessBoard[sqNum[1]][sqNum[0]] = piece;
     });
@@ -91,7 +88,6 @@ function genFenScript() {
     var isBlackCastle = true;
     var movesPlayed = 0;
 
-    debugger;
     if (!window.location.href.includes("analysis")) {
       var vmlElement = document.querySelector(".vertical-move-list");
       var movesList = vmlElement.children;
