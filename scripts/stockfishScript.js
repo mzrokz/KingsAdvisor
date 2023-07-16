@@ -28,11 +28,36 @@
 // }
 
 function getMoves(fen) {
-  const url = "https://0e4d-122-168-14-142.ngrok-free.app";
-  fetch(url)
-    .then((response) => response.json())
+  //   const url = "https://0e4d-122-168-14-142.ngrok-free.app";
+  //   const url = "http://localhost:3000";
+  //   fetch(url)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       debugger;
+  //       console.log("Success:", data);
+  //     });
+
+  // Post request on https://localhost:44366/api/uci/GetBestMoves
+  const url = "https://localhost:44366/api/uci/GetBestMoves";
+  const data = {
+    FenString: fen,
+    Depth: 10,
+    MultiPv: 0,
+    WaitTime: 5,
+  };
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+  fetch(url, options)
+    .then((response) => {
+      console.log(response);
+      return response.json();
+    })
     .then((data) => {
-      debugger;
-      console.log("Success:", data);
+      console.log(data);
     });
 }
