@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 require("dotenv").config();
-const { stockFish } = require("./scripts/stockfish");
-const { mutation } = require("./scripts/mutation");
+const stockFish = require("./scripts/stockfish");
+const mutation = require("./scripts/mutation");
 
 async function scrapeWebsite() {
   const browser = await puppeteer.launch({
@@ -36,38 +36,50 @@ async function scrapeWebsite() {
     page.waitForSelector(".horizontal-move-list"),
   ]);
 
-  await new Promise((r) => setTimeout(r, 2000));
+  await new Promise((r) => setTimeout(r, 3000));
 
   // Attach a script to the page
   await page.addScriptTag({ path: "page-scripts/fenScript.js" });
-  const fen = await page.evaluate(() => {
-    return genFenScript();
-  });
-  console.log(fen);
+  await page.addScriptTag({ path: "page-scripts/mutation-observer.js" });
+  await page.addScriptTag({ path: "page-scripts/chess-board.js" });
+
+  let fen = "";
+  while (fen === "") {
+    try {
+      fen = await page.evaluate(() => {
+        return genFenScript();
+      });
+      console.log(fen);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   stockFish.spawnStockfish();
   stockFish.startNewGame();
-
-  // Handle Stockfish output
-  stockFish.process.stdout.on("data", (data) => {
-    // console.log("Stockfish output:", data.toString());
-    // transform data into "score cp and pv moves"
-    if (
-      data.toString().includes("multipv") &&
-      data.toString().includes("score cp") &&
-      data.toString().includes("pv")
-    ) {
-      console.log(data.toString());
-    }
-  });
+  stockFish.setProcessOutput(page);
 
   mutation.observeMoveList(page);
+  stockFish.getNextMoves(fen);
 
   // wait for 5 seconds
-  //   await new Promise((r) => setTimeout(r, 200000));
+  // await new Promise((r) => setTimeout(r, 200000));
   //   stockfish.stdin.write("quit\n");
 
   //   await browser.close();
+  // while (true) {
+  //   // stockFish.getNextMoves(fen);
+  // }
+
+  process.on("SIGINT", () => {
+    console.log("Received SIGINT signal. Exiting...");
+    process.exit(0);
+  });
+
+  console.log("Waiting for Ctrl+C...");
+
+  // Keep the program running indefinitely
+  setInterval(() => {}, 1000);
 }
 
 scrapeWebsite();

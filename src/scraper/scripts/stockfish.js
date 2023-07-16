@@ -1,4 +1,5 @@
 const { spawn } = require("child_process");
+const getHighlightClass = require("./chess-board");
 
 let stockFish = {
   process: null,
@@ -30,6 +31,39 @@ let stockFish = {
     // Ask Stockfish to calculate the best move
     process.stdin.write("go depth 10\n");
   },
+
+  setProcessOutput: (page) => {
+    // Handle Stockfish output
+    process.stdout.on("data", (data) => {
+      const line = data.toString();
+      console.log("Stockfish output:", line);
+      // transform data into "score cp and pv moves"
+      if (
+        line.includes("multipv") &&
+        line.includes("score cp") &&
+        line.includes("pv")
+      ) {
+        console.log(line);
+      }
+      if (line.includes("bestmove")) {
+        const move = line
+          .match(/bestmove ..../)[0]
+          .split(" ")[1]
+          .substring(0, 2);
+        const highlightClass = getHighlightClass(move);
+        page.evaluate(() => {
+          return clearHighlightedSquares();
+        });
+        page.evaluate((args) => {
+          return highlightSquare(args);
+        }, highlightClass);
+      }
+    });
+  },
+
+  getProcess() {
+    return process;
+  },
 };
 
-export { stockFish };
+module.exports = stockFish;
