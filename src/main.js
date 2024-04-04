@@ -1,4 +1,7 @@
 const puppeteer = require('puppeteer');
+const stockFish = require('./stockfish');
+const mutation = require('./mutation');
+const config = require('./config');
 
 const launch = async () => {
   // launch chess.com on puppeteer
@@ -16,12 +19,28 @@ const launch = async () => {
   await page.type('input[name="_username"]', process.env.ALIAS);
   await page.type('input[name="_password"]', process.env.PASSWORD);
   await page.click('button[type="submit"]');
-  await page.waitForSelector('#board', { timeout: 0 });
 
   await page.exposeFunction('startGame', async () => {
     console.log('Game started');
+    page.evaluate(() => {
+      attachMutationObserver();
+    });
   });
 
+  stockFish.spawnStockfish();
+  stockFish.startNewGame();
+  stockFish.setProcessOutput(page);
+  mutation.observeMoveList(page);
+
+  await page.waitForSelector('.move-list-wrapper-component', { timeout: 0 });
+
+  await attachActionButtons(page);
+  await addScriptTags(page);
+
+  //   await browser.close();
+};
+
+const attachActionButtons = async (page) => {
   page.evaluate(() => {
     const form = document.querySelector('.nav-search-form');
     if (form) {
@@ -29,11 +48,7 @@ const launch = async () => {
       form.style.flexDirection = 'column';
     }
   });
-
-  //   await addScriptTags(page);
   await attachStartGame(page);
-
-  //   await browser.close();
 };
 
 const attachStartGame = async (page) => {
@@ -55,4 +70,8 @@ const addScriptTags = async (page) => {
   await page.addScriptTag({ path: './page-scripts/chess-board.js' });
 };
 
-launch();
+try {
+  launch();
+} catch (error) {
+  console.log(error);
+}

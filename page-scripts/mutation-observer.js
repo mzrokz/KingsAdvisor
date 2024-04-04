@@ -1,9 +1,8 @@
-(() => {
-  const moveListContainer = document.querySelector(".vertical-move-list");
+const attachMutationObserver = () => {
+  const moveListContainer = document.querySelector('.vertical-move-list');
 
   // Callback function to execute when mutations are observed
   const callback = (mutationList, observer) => {
-    debugger;
     const fen = genFenScript();
     onMoveListMutation(fen);
   };
@@ -16,4 +15,4 @@
     childList: true,
     subtree: true,
   });
-})();
+};

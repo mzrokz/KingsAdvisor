@@ -5,7 +5,6 @@ const highlighColors = [
 ];
 
 function highlightSquare(className, bestMove) {
-  debugger;
   const board = document.querySelector("#board-single");
   const div = document.createElement("div");
   div.classList.add(className);
