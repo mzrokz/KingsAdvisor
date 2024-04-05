@@ -3,8 +3,8 @@ function genFenScript() {
   var chessBoard = null;
 
   let squares = document
-    .getElementsByClassName("board")[0]
-    .querySelectorAll(".piece");
+    .getElementsByClassName('board')[0]
+    .querySelectorAll('.piece');
   var squareClassList = [];
   squares.forEach((f) => {
     // console.log(f.className);
@@ -25,22 +25,22 @@ function genFenScript() {
       let className = squareClass;
 
       let match = className.match(/square-\d\d/);
-      if (match[0] && match[0] != "") {
+      if (match[0] && match[0] != '') {
         let sqMatch = match[0].match(/\d\d/);
-        if (sqMatch[0] && sqMatch[0] != "") {
+        if (sqMatch[0] && sqMatch[0] != '') {
           var sqNum = sqMatch[0];
         }
       }
 
       var p = className.match(/(\s..\s)|(\s..$)|(^..\s)/);
-      if (p[0] && p[0] != "") {
+      if (p[0] && p[0] != '') {
         var piece = p[0].trim();
       }
 
       chessBoard[sqNum[1]][sqNum[0]] = piece;
     });
 
-    var strFen = "";
+    var strFen = '';
     for (var l = 8; l >= 1; l--) {
       for (var m = 1; m <= 8; m++) {
         var p = getPieceInitals(chessBoard[l][m]);
@@ -49,17 +49,17 @@ function genFenScript() {
         }
       }
       if (l > 1) {
-        strFen += "/";
+        strFen += '/';
       }
     }
 
-    var x = strFen.split("/");
+    var x = strFen.split('/');
     var y = [];
     x.forEach((f) => {
-      var newFen = "";
+      var newFen = '';
       var occ = 0;
       for (var a = 0; a < 8; a++) {
-        if (f[a] == "1") {
+        if (f[a] == '1') {
           // console.log(f)
           occ += 1;
           if (occ > 1) {
@@ -77,25 +77,26 @@ function genFenScript() {
       y.push(newFen);
     });
 
-    var fen = y.join("/");
+    var fen = y.join('/');
 
     // console.log(fen);
     // ----------------------------------------------------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------------------------------------------------
-    var nextMove = "";
-    var castle = "KQkq";
+    var nextMove = '';
+    var castle = '';
     var isWhiteCastle = true;
     var isBlackCastle = true;
     var movesPlayed = 0;
 
-    if (!window.location.href.includes("analysis")) {
-      var vmlElement = document.querySelector(".vertical-move-list");
+    if (!window.location.href.includes('analysis')) {
+      var vmlElement = document.querySelector('.vertical-move-list');
       var movesList = vmlElement.children;
       var movesPlayed = movesList.length;
 
       for (let i = 0; i < movesList.length; i++) {
-        var whiteMove = movesList[i].querySelector(".white");
-        var blackMove = movesList[i].querySelector(".black");
+        castle = '';
+        var whiteMove = movesList[i].querySelector('.white');
+        var blackMove = movesList[i].querySelector('.black');
 
         if (whiteMove) {
           var move;
@@ -107,9 +108,9 @@ function genFenScript() {
           // }
 
           if (
-            whiteMove.innerText == "O-O" ||
-            whiteMove.innerText == "O-O-O" ||
-            whiteMove.innerText.includes("K")
+            whiteMove.innerText == 'O-O' ||
+            whiteMove.innerText == 'O-O-O' ||
+            whiteMove.innerText.includes('K')
           ) {
             isBlackCastle = false;
           }
@@ -125,68 +126,70 @@ function genFenScript() {
           // }
 
           if (
-            blackMove.innerText == "O-O" ||
-            blackMove.innerText == "O-O-O" ||
-            blackMove.innerText.includes("K")
+            blackMove.innerText == 'O-O' ||
+            blackMove.innerText == 'O-O-O' ||
+            blackMove.innerText.includes('K')
           ) {
             isWhiteCastle = false;
           }
         }
 
         if (!isWhiteCastle && !isBlackCastle) {
-          castle = "-";
+          castle = '-';
         } else {
           if (isWhiteCastle) {
-            castle = "KQ";
-          } else if (isBlackCastle) {
-            castle = "kq";
+            castle = 'KQ';
+          }
+          if (isBlackCastle) {
+            castle += 'kq';
           }
         }
 
         if (i <= movesList.length) {
           if (whiteMove) {
-            nextMove = "b";
+            nextMove = 'b';
           }
           if (blackMove) {
-            nextMove = "w";
+            nextMove = 'w';
           }
         }
       }
     } else {
-      let movesList = document.querySelectorAll(".move-text");
+      let movesList = document.querySelectorAll('.move-text');
       movesPlayed = parseInt(movesList.length / 2) + (movesList.length % 2);
       for (let i = 0; i < movesList.length; i++) {
         // if i is even then white has played
         if (i % 2 == 0) {
           if (
-            movesList[i].innerText == "O-O" ||
-            movesList[i].innerText == "O-O-O" ||
-            movesList[i].innerText.includes("K")
+            movesList[i].innerText == 'O-O' ||
+            movesList[i].innerText == 'O-O-O' ||
+            movesList[i].innerText.includes('K')
           ) {
             isBlackCastle = false;
           }
-          nextMove = "b";
+          nextMove = 'b';
         }
         // if i is odd then black has played
         else {
           if (
-            movesList[i].innerText == "O-O" ||
-            movesList[i].innerText == "O-O-O" ||
-            movesList[i].innerText.includes("K")
+            movesList[i].innerText == 'O-O' ||
+            movesList[i].innerText == 'O-O-O' ||
+            movesList[i].innerText.includes('K')
           ) {
             isWhiteCastle = false;
           }
-          nextMove = "w";
+          nextMove = 'w';
         }
       }
 
       if (!isWhiteCastle && !isBlackCastle) {
-        castle = "-";
+        castle = '-';
       } else {
         if (isWhiteCastle) {
-          castle = "KQ";
-        } else if (isBlackCastle) {
-          castle = "kq";
+          castle = 'KQ';
+        }
+        if (isBlackCastle) {
+          castle += 'kq';
         }
       }
     }
@@ -203,7 +206,7 @@ function genFenScript() {
 function asd() {
   function apiSuccess(response) {
     // console.log(response);
-    var divLines = $(".chessLines")[0];
+    var divLines = $('.chessLines')[0];
     if (divLines) {
       // $(divLines).text(this.responseText);
       // $(divLines).html(this.responseText);
@@ -220,14 +223,14 @@ function asd() {
 
   var xhr = new XMLHttpRequest();
 
-  xhr.addEventListener("readystatechange", function () {
+  xhr.addEventListener('readystatechange', function () {
     if (this.readyState === 4) {
       jsfx.apiSuccess(this.responseText);
     }
   });
 
-  xhr.open("POST", jsfx.apiUrl + "/api/uci/GetBestMoves");
-  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.open('POST', jsfx.apiUrl + '/api/uci/GetBestMoves');
+  xhr.setRequestHeader('Content-Type', 'application/json');
 
   xhr.send(data);
 }
@@ -240,40 +243,40 @@ function replaceAt(str, index, replacement) {
 }
 
 function getPieceInitals(piece) {
-  if (piece && piece != "") {
+  if (piece && piece != '') {
     switch (piece) {
-      case "wp":
-        return "P";
-      case "wr":
-        return "R";
-      case "wn":
-        return "N";
-      case "wb":
-        return "B";
-      case "wq":
-        return "Q";
-      case "wk":
-        return "K";
+      case 'wp':
+        return 'P';
+      case 'wr':
+        return 'R';
+      case 'wn':
+        return 'N';
+      case 'wb':
+        return 'B';
+      case 'wq':
+        return 'Q';
+      case 'wk':
+        return 'K';
 
       // ---------------------
 
-      case "bp":
-        return "p";
-      case "br":
-        return "r";
-      case "bn":
-        return "n";
-      case "bb":
-        return "b";
-      case "bq":
-        return "q";
-      case "bk":
-        return "k";
+      case 'bp':
+        return 'p';
+      case 'br':
+        return 'r';
+      case 'bn':
+        return 'n';
+      case 'bb':
+        return 'b';
+      case 'bq':
+        return 'q';
+      case 'bk':
+        return 'k';
 
       default:
-        return "1";
+        return '1';
     }
   } else {
-    return "1";
+    return '1';
   }
 }
