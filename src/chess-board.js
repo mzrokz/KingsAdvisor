@@ -7,4 +7,15 @@ function getHighlightClasses(strSquare) {
   return highlightClasses;
 }
 
-module.exports = getHighlightClasses;
+function getHighlightSquareNumbers(strSquare) {
+  const squareNumbers = [
+    `${horizontalSquare[strSquare[0]]}${strSquare[1]}`,
+    `${horizontalSquare[strSquare[2]]}${strSquare[3]}`,
+  ];
+  return squareNumbers;
+}
+
+module.exports = {
+  getHighlightClasses,
+  getHighlightSquareNumbers,
+};

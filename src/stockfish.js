@@ -1,5 +1,8 @@
 const { spawn } = require('child_process');
-const getHighlightClasses = require('./chess-board');
+const {
+  getHighlightClasses,
+  getHighlightSquareNumbers,
+} = require('./chess-board');
 const config = require('./config');
 
 let stockFish = {
@@ -64,16 +67,16 @@ let stockFish = {
         for (let move = config.bestMove; move > 0; move--) {
           const bestMove = line.match(`multipv ${move}.*?pv (.\\d.\\d)`);
           if (bestMove && bestMove[1]) {
-            const highlightClasses = getHighlightClasses(bestMove[1]);
+            const squareNumbers = getHighlightSquareNumbers(bestMove[1]);
             page.evaluate(() => {
-              return clearHighlightedSquares();
+              clearHighlightedSquares();
             });
-            highlightClasses.forEach((highlightClass) => {
+            squareNumbers.forEach((square) => {
               page.evaluate(
                 (args) => {
-                  return highlightSquare(args[0], args[1]);
+                  highlightSquare(args[0], args[1]);
                 },
-                [highlightClass, move - 1]
+                [square, move - 1]
               );
             });
           }
